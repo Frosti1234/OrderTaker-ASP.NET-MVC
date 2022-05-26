@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="~/MyStyles/Theme.css" />
+    <link rel="stylesheet" href="~/MyStyles/SiteConfiguration.css" />
+
+</head>
+<body>
+    <partial name="Scripts/Scripts.cshtml" />
+    <div class="background" style="background-image: url('./MyStyles/Pizza.jpg');">
+        <div class="color-overlay d-flex">
+            <div class="container">
+                <main role="main">
+                    @RenderBody()
+                    <partial name="Modals/Payment.cshtml" />
+                    <partial name="Modals/OrderDetails.cshtml" />
+                    <partial name="Modals/Alert.cshtml" />
+                </main>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+﻿<div id="divPayment" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Payment</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            Payment Total
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">$</span>
+                                <input style="text-align:right" type="text" id="txtPaymentTotal" readonly="readonly" value="0.00" class="form-control" />
+                            </div>
+
+                        </div>
+                        <div class="form-group col-md-6">
+                            Payment Amount
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">$</span>
+                                <input style="text-align:right" type="text" id="txtPaymentAmount" value="0.00" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            Return
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">$</span>
+                                <input style="text-align:right" type="text" id="txtReturnTotal" readonly="readonly" value="0.00" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            Balance
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">$</span>
+                                <input style="text-align:right" type="text" id="txtBalance" readonly="readonly" value="0.00" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnPay" class="btn btn-success" data-dismiss="modal" disabled="true" value="Pay">Pay!</button>
+                <button id="btnClose" data-dismiss="modal" class="btn btn-danger" value="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

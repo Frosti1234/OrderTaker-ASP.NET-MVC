@@ -1,0 +1,16 @@
+{
+  "name": "ordertaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "autoprefixer": "^10.2.6",
+  "cssnano": "^5.0.5",
+  "cssnano-preset-advanced": "^5.1.2",
+  "postcss-cli": "^8.3.1",
+  "sass": "^1.34.1",
+}

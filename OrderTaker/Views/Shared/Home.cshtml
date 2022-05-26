@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Models.FoodItem>
+
+@using Models;
+
+@{
+    ViewData["Title"] = "GetFoodItems";
+}
+
+
+<div class="row">
+
+
+
+    <div class="col-md-3">
+
+        <legend>
+            Meals
+        </legend>
+
+
+
+
+        Price
+        <div class="input-group mb-2">
+            <span class="input-group-text">$</span>
+            <input style="text-align:right" type="text" readonly="readonly" id="txtFoodItemPrice"
+                   value="0.00" name="UnitPrice" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            @Html.DropDownList("FoodItemV", new SelectList(Model,"FoodItemId","FoodItemName"),
+            new { @class = "form-control",size =10})
+        </div>
+
+
+
+
+        Quantity
+        <div class="input-group plus-minus-input">
+
+            <div class="input-group-button">
+
+                <input type="button" class="btn btn-outline-danger" value="-" id="btnMinusQuantity">
+            </div>
+            <input style="text-align:center" readonly="readonly" type="text" id="txtQuantity"
+                   value="0" min="1" name="Quantity" class="form-control" />
+
+            <div class="input-group-button">
+                <input type="button" class="btn btn-outline-danger" value="+" id="btnPlusQuantity">
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+        Total
+        <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input style="text-align:right" readonly="readonly" type="text" id="txtOTotal"
+                   value="0.00" name="Total" class="form-control" />
+            <input type="button" id="btnAddToList" value="Add To List" class="btn btn-outline-danger" />
+        </div>
+
+
+        Name
+        <div class="form-group">
+            <input style="text-align:left" type="text" id="txtCustomer" placeholder="Enter your name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            Payment Type
+            @Html.DropDownList("PMethodV", new SelectList(new List<SelectListItem>
+            {
+            new SelectListItem{Text = "Card",Value = "1"},new SelectListItem{Text = "Cash",Value = "2"}
+            }, "Value", "Text"),
+            new { @class = "form-control",})
+        </div>
+
+        Order Price
+        <div class="input-group mb-3">
+            <span class="input-group-text">$</span>
+            <input style="text-align:right;" name="GTotal" type="text" readonly="readonly" id="txtGTotal"
+                   class="form-control">
+
+            <input type="button" id="btnPayment" value="Payment" data-backdrop="static" data-keydrop="false" data-toggle="modal" data-target="#divPayment" class="btn btn-outline-danger" />
+        </div>
+    </div>
+
+
+
+
+
+    <div class="col-md-7">
+        <legend>Your order</legend>
+        <table style="width:100%;" id="OrderDetailTable">
+            <thead>
+                <tr>
+                    <th>
+                        Pizza
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Total
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+    <div class="col-md-2">
+        <legend>Preparing</legend>
+        <table style="width:100%;" id="OrderMasterTable">
+            <thead>
+                <tr>
+                    <th>
+                        Order Number
+                    </th>
+                    <th>
+                        Details
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

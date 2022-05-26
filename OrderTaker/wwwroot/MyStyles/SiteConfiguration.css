@@ -1,0 +1,20 @@
+﻿::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.background {
+    background-size:cover;
+    min-height: 100vh;
+    background-repeat: no-repeat;
+}
+
+th, td {
+    padding: 10px;
+}

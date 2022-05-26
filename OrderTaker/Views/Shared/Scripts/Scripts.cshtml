@@ -1,0 +1,358 @@
+﻿
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+                $(document).ready(function () {
+                    $("#FoodItemV").val(0);
+                    $("#txtGTotal").val('0.00');
+                    $("#FoodItemV").change(function () {
+                        var foodItemId =$("#FoodItemV").val();
+                        GetFoodItemPrice(foodItemId);
+                        $("#txtQuantity").val('0');
+                        $("#txtOTotal").val('0.00');
+                    });
+                    RefreshOrderTable();
+
+
+
+                    $("#btnAddToList").click(function () {
+                      AddDetailToTable();
+                      CalculateGTotal();
+                      CalculateBalance();
+                    });
+
+                    $("input[type=text]").keyup(function () {
+                      CalculateBalance();
+                    });
+
+                    $("#btnMinusQuantity").click(function () {
+                      MinusQuantity();
+
+                    });
+
+                    $("#btnPlusQuantity").click(function () {
+                      PlusQuantity();
+                    });
+
+                    $("#btnPay").click(function () {
+                      FinalPayment();
+                    });
+
+                    $("#btnClose").click(function () {
+                      RefreshOrderTable();
+                    });
+
+                });
+
+
+
+
+    //Insert an order into the database.
+           function FinalPayment() {
+               if ($('#OrderDetailTable tr').length == 1) {
+                   $("#divAlert").modal('show');
+                   $("#divAlertText").text("Your order is empty.");
+               }
+               else{
+
+                 //Insert a customer into the database and return his id.
+                 var cName =$("#txtCustomer").val();
+                  if(cName == ''){
+                     $("#divAlert").modal('show');
+                     $("#divAlertText").text("Plase enter your name.");
+                  }
+                  else{
+                    $.ajax({
+                     type: 'POST',
+                     dataType: 'text',
+                     data: { name: cName },
+                     url: '/customer/Post',
+                     success: function (data) {callback(data); }
+                     });
+                  }
+
+                  //Create an order and push it into the database.
+                    function callback(response) {
+                    var objOrderMaster = {};
+                    var ListOrderDetail = new Array();
+                    objOrderMaster.OrderNumber = Math.floor((Math.random() * 10000) + 1).toString();
+                    objOrderMaster.CustomerId = response;
+                    objOrderMaster.PMethod= $("#PMethodV option:selected").text();
+                    objOrderMaster.GTotal = $("#txtGTotal").val().toString().replace(".", ",");
+
+                      $("#OrderDetailTable").find("tr:gt(0)").each(function () {
+                      var objOrderDetail = {};
+                          objOrderDetail.FoodItemId = $(this).find("td:eq(0)").text();
+                          objOrderDetail.FoodItemPrice = $(this).find("td:eq(2)").text().replace(".", ",");
+                          objOrderDetail.Quantity = $(this).find("td:eq(3)").text();
+                          ListOrderDetail.push(objOrderDetail);
+                      });
+
+              objOrderMaster.OrderDetails = ListOrderDetail;
+
+              $.ajax({
+                  type: 'POST',
+                  dataType: 'JSON',
+                  data: objOrderMaster,
+                  url: '/order/Post',        //refreshing controls.
+                                             //open alert modal
+                  success: function (data) {RefreshOrderTable();
+                                            $("#divAlert").modal('show');
+                                            $("#divAlertText").text("Your order has been placed!");
+                                            $("#txtCustomer").val('');
+                                            $("#txtGTotal").val('0.00');
+                                            $("#txtPaymentTotal").val('0.00');
+                                            $("#txtPaymentAmount").val('0.00');
+                                            $("#txtReturnTotal").val('0.00');
+                                            $("#txtBalance").val('0.00');
+                                            $("#OrderDetailTable").find("tr:gt(0)").each(function () {
+                                                 $(this).closest('tr').remove();
+                                              });
+                                              ResetItems();
+                                            }
+                    });
+                    }
+              }
+
+            }
+
+
+            //Get all orders from the database and refresh table.
+            function RefreshOrderTable(){
+                $.get("/order/GetAll", function(data){callback(data)},'json')
+
+                function callback(response){
+                    var AllOrders = response;
+                    var totalOrderList = $("#OrderMasterTable");
+
+
+                  $("#OrderMasterTable").find("tr:gt(0)").each(function () {
+                       $(this).closest('tr').remove();
+                   });
+
+                 //Create and add a row of OrderMasterTable only with OrderNumber and a button that opens modal with details.
+                  $.each(AllOrders,function(index,Order){
+                  var orderMasterItem = "<tr><td hidden> " + Order.orderMasterId + "</td><td>"
+                     + Order.orderNumber +
+                    "</td><td> <input type='button' data-backdrop='static' data-keydrop='false' data-toggle='modal' data-target='#divOrderDetails' onclick='AddAllOrderInfo("+Order.orderMasterId+")' value='I' name='btnDetails' id='btnDetails' class='btn btn-outline-danger btn' />" + "</td></tr>";
+
+                    totalOrderList.append(orderMasterItem);
+                   });
+
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+          function AddAllOrderInfo(Id){
+               //Remove old info from modal.
+               $("#OrderAllDetailTable").find("tr:gt(0)").each(function () {
+                      $(this).closest('tr').remove();
+               });
+
+               $.get("/order/Get",{ id:Id }, function(data){callback(data,Id)},'json');
+
+               //Create a nested HTML list and add it as a row in OrderAllDetailTable.
+               function callback(response,Id){
+                var AllOrderDetails = response
+                var AllOrderDetailsDiv = $("#OrderAllDetailTable");
+                var AllOrderDetailsitem="";
+
+                var p1 = "<tr><td><ul><li> OrderNumber: "+AllOrderDetails.orderNumber+"</li><li>Customer:" +AllOrderDetails.customer.customerName+"</li><li>Products:";
+
+                var p2="";
+                $.each(AllOrderDetails.orderDetails,function(index,OrderDetail){
+                  p2 = p2 + "<ul><li>Pizza: "+OrderDetail.foodItem.foodItemName+"</li><li>Price: "+OrderDetail.foodItem.price+"</li><li>Quantity: "+OrderDetail.quantity+"</li></ul>";
+                });
+
+                var p3 = "</li><br><br><li>Payment Method: "+AllOrderDetails.pMethod+" </li> <li>Total Order Price: "+AllOrderDetails.gTotal+" </li></ul><div class='modal-footer'><button id='btnAdmin'  onclick='AddAllOrderTechnicalInfo("+AllOrderDetails.orderMasterId+")' class='btn btn-danger'>Admin</button><button id='btnClose' data-dismiss='modal' class='btn btn-danger' value='Close'>Close</button></td></tr>";
+
+                AllOrderDetailsitem = p1 +p2+ p3;
+
+                AllOrderDetailsDiv.append(AllOrderDetailsitem);
+
+               }
+
+           }
+
+
+          function AddAllOrderTechnicalInfo(Id){
+               //Remove old info from modal.
+               $("#OrderAllDetailTable").find("tr:gt(0)").each(function () {
+                      $(this).closest('tr').remove();
+               });
+
+               $.get("/order/Get",{ id:Id }, function(data){callback(data,Id)},'json');
+
+               //Create a nested HTML list and add it as a row in OrderAllDetailTable.
+               function callback(response,Id){
+                var AllOrderTechnicalDetails = response
+                var AllOrderTechnicalDetailsDiv = $("#OrderAllDetailTable");
+                var AllOrderTechnicalDetailsitem="";
+
+                var p1 = "<tr><td>   <ul><li> OrderMasterId: "+AllOrderTechnicalDetails.orderMasterId+" </li><li> OrderNumber: "+AllOrderTechnicalDetails.orderNumber+" </li>  <li>  CustomerId: "+AllOrderTechnicalDetails.customerId+"  </li>  <li>  PMethod: "+AllOrderTechnicalDetails.pMethod+" </li> <li> GTotal: "+AllOrderTechnicalDetails.gTotal+" </li> <li>Customer:<ul><li>CustomerId: "+AllOrderTechnicalDetails.customer.customerId+"</li><li>CustomerName: "+AllOrderTechnicalDetails.customer.customerName+"</li></ul></li><li>OrderDetails:";
+
+                var p2="";
+                $.each(AllOrderTechnicalDetails.orderDetails,function(index,OrderDetail){
+                  p2 = p2 + "<ul><li>OrderDetailId: "+OrderDetail.orderDetailId+"</li><li>OrderMasterId: "+OrderDetail.orderMasterId+"</li><li>FoodItemId: "+OrderDetail.foodItemId+"</li><li>Quantity: "+OrderDetail.quantity+"</li><li>FoodItem: <ul><li>FoodItemID: "+OrderDetail.foodItem.foodItemId+" </li><li>FoodItemName: "+OrderDetail.foodItem.foodItemName+" </li><li>FoodItemPrice: "+OrderDetail.foodItem.price+" </li></ul></li></ul>";
+                });
+
+                var p3 = "</li></ul><div class='modal-footer'><button id='btnDelete' data-dismiss='modal' class='btn btn-light' onclick='RemoveOrderItem(this, "+Id+" )' value='Delete'>Delete</button><button id='btnBack' onclick='AddAllOrderInfo("+AllOrderTechnicalDetails.orderMasterId+")' class='btn btn-danger'>Back</button></td></tr>";
+
+                AllOrderTechnicalDetailsitem = p1 +p2+ p3;
+
+                AllOrderTechnicalDetailsDiv.append(AllOrderTechnicalDetailsitem);
+
+               }
+
+           }
+
+           //Create fooditem with quantity and add it to the order table.
+            function AddDetailToTable() {
+                var totalItemList = $("#OrderDetailTable");
+                var foodItemPrice = $("#txtFoodItemPrice").val();
+                var foodItemId = $("#FoodItemV").val();
+                var foodItemName = $("#FoodItemV option:selected").text();
+
+                if( $("#txtQuantity").val() == 0){$("#txtQuantity").get(0).value++;}
+                var Quantity =  $("#txtQuantity").val();
+                var OTotal = foodItemPrice * Quantity;
+
+                if(foodItemName==''){
+                    $("#divAlert").modal('show');
+                    $("#divAlertText").text("Please select meal.");
+                }
+                else{
+
+                var OrderDetailItem = "<tr><td hidden> " + foodItemId + "</td><td>"
+                    + foodItemName + "</td><td>" +
+                    parseFloat(foodItemPrice).toFixed(2) + "</td><td>" +
+                    parseFloat(Quantity) + "</td><td>" +
+                    parseFloat(OTotal).toFixed(2) + "</td> <td> <input type='button' value='Remove' name='remove' class='btn btn-outline-danger' onclick='RemoveDetailItem(this)'/>" + "</td></tr>";
+                totalItemList.append(OrderDetailItem);
+                ResetItems();
+                }
+            }
+
+
+            function MinusQuantity(){
+
+                   if($("#txtQuantity").get(0).value > 1){
+                      $("#txtQuantity").get(0).value--
+                     } else{
+                      $("#txtQuantity").val('0');
+                     }
+                   CalculateOTotal();
+            }
+
+            function PlusQuantity(){
+                   $("#txtQuantity").get(0).value++;
+                   CalculateOTotal();
+            }
+
+            function ResetItems() {
+                $("#txtQuantity").val('0');
+                $("#FoodItemV").val(0);
+                $("#txtFoodItemPrice").val('0.00');
+                $("#txtOTotal").val('0.00');
+            }
+
+            function RemoveDetailItem(foodItem) {
+                $(foodItem).closest('tr').remove();
+                CalculateGTotal();
+            }
+
+            function RemoveOrderItem(orderItem,id){
+                $(orderItem).closest('tr').remove();
+                $.ajax({
+                   type: 'DELETE',
+                   dataType: 'JSON',
+                   url: '/order/Delete'+'?'+$.param({"Id":id}),
+                   success: function(result) {
+                       $("#divOrderDetails").modal('hide');
+                       $("#divAlert").modal('show');
+                       $("#divAlertText").text("Order deleted!");
+                       RefreshOrderTable();}
+               });
+
+
+            }
+
+
+            //Calculate total value of OrderItem
+            function CalculateOTotal() {
+                    var FoodItemPrice = $("#txtFoodItemPrice").val();
+                    var Quantity = $("#txtQuantity").val();
+                    var OTotal = FoodItemPrice * Quantity;
+                    $("#txtOTotal").val(OTotal.toFixed(2));
+            }
+
+            //Calculate total value of entire order.
+            function CalculateGTotal() {
+                $("#txtGTotal").val("0.00");
+                var GTotal = 0.00;
+                $("#OrderDetailTable").find("tr:gt(0)").each(function () {
+                    var Total = $(this).find("td:eq(4)").text();
+                        GTotal += parseFloat(Total);
+                });
+
+                $("#txtGTotal").val(parseFloat(GTotal).toFixed(2));
+                $("#txtPaymentTotal").val(parseFloat(GTotal).toFixed(2));
+                $("#txtBalance").val(parseFloat(GTotal).toFixed(2));
+            }
+
+            //Calculate balance in payment table.
+            function CalculateBalance() {
+                var FinalAmount = $("#txtPaymentTotal").val();
+                var PaymentAmount = $("#txtPaymentAmount").val();
+                var ReturnAmount = parseFloat(PaymentAmount) - parseFloat(FinalAmount);
+                var BalanceAmount = -(parseFloat(FinalAmount) - parseFloat(PaymentAmount));
+
+
+
+                if (BalanceAmount < 0.00) {
+                     $("#txtBalance").val(parseFloat(BalanceAmount).toFixed(2));
+                }
+                else {
+                    $("#txtBalance").val("Check return.");
+                }
+
+                if (ReturnAmount > 0.00) {
+                    $("#txtReturnTotal").val(parseFloat(ReturnAmount).toFixed(2));
+                }
+                else {
+                    $("#txtReturnTotal").val("Check balance.");
+                }
+
+
+                if (BalanceAmount < 0.00) {
+                    $("#btnPay").attr('disabled', true);
+                }
+                else {
+                    $("#btnPay").attr('disabled', false);
+                }
+            }
+
+
+            function GetFoodItemPrice(itemId) {
+                    $.ajax({
+                        type: 'GET',
+                        dataType: 'JSON',
+                        contentType: 'application/json; charset=utf-8',
+                        data: { itemId: itemId },
+                        url: '/fooditem/GetFoodItemPrice',
+                        success: function (data) { $("#txtFoodItemPrice").val(data) }
+                    });
+            }
+
+
+</script>
