@@ -15,7 +15,7 @@ The application will allow you to create an order with different products and qu
 
 
 ## Technologies
-- c# asp.net mvc
+- c# asp.net mvc 5.0
 - Entity framework
 - bootstrap
 - MS SQL server
