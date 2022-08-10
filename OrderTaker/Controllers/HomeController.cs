@@ -1,7 +1,6 @@
 ﻿using BusinessLayer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OrderTaker.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

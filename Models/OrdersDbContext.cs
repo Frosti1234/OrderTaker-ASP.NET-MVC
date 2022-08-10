@@ -10,7 +10,7 @@ namespace Models
     public class OrdersDbContext : DbContext
     {
         private string _connectionString =
-        "Data Source=SQL8003.site4now.net;Initial Catalog=db_a877a8_ordertaker;User Id=db_a877a8_ordertaker_admin;Password=marcin321;";
+         @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=OrdersDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         public OrdersDbContext(DbContextOptions<OrdersDbContext> options) : base(options)
         {
