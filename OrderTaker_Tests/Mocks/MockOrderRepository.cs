@@ -4,7 +4,7 @@ using Repositories;
 using System;
 using System.Collections.Generic;
 
-namespace OrderTakerTests
+namespace OrderTaker_Tests.Mocks
 {
     public class MockOrderRepository : Mock<IOrderRepository>
     {
@@ -43,6 +43,26 @@ namespace OrderTakerTests
         {
             Verify(x => x.GetOrderById(It.IsAny<int>()), times);
 
+            return this;
+        }
+
+        public MockOrderRepository MockDeleteOrderById(bool result)
+        {
+            Setup(x => x.DeleteOrder(It.IsAny<int>()))
+                .Returns(result);
+            return this;
+        }
+
+        public MockOrderRepository MockDeleteOrderByIdInvalid(bool result)
+        {
+            Setup(x => x.DeleteOrder(It.IsAny<int>()))
+                .Throws(new Exception());
+            return this;
+        }
+
+        public MockOrderRepository VerifyDeleteOrderById(Times times)
+        {
+            Verify(x => x.DeleteOrder(It.IsAny<int>()), times);
             return this;
         }
     }

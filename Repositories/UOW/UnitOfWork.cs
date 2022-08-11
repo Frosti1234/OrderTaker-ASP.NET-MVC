@@ -19,6 +19,13 @@ namespace Repositories.UOW
             this._context = context;
         }
 
+        public UnitOfWork(ICustomerRepository Crepo, IFoodItemRepository Irepo, IOrderRepository Orepo)
+        {
+            this._customer = Crepo;
+            this._foodItem = Irepo;
+            this._order = Orepo;
+        }
+
         public ICustomerRepository Customer
         {
             get

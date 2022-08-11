@@ -1,28 +1,60 @@
 ﻿using BusinessLayer;
 using Models;
 using Moq;
+using OrderTaker_Tests.Mocks;
 using Repositories.UOW;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
-namespace OrderTakerTests.Tests
+namespace OrderTaker_Tests.Tests
 {
     public class BLOrderTests
     {
-        private readonly OrdersDbContext _context;
-
         [Fact]
-        public void BLOrder_GetOrderById_ValidId()
+        public void BLOrder_GetOrderById_InvalidId()
         {
             //Arrange
             var mockOrderRepo = new MockOrderRepository().MockGetOrderByIdInvalid();
-            var Uow = new UnitOfWork(_context);
-            var BLOrder = new BLOrder(Uow);
+            var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
+            var blOrder = new BLOrder(uow);
 
             //Act
-            var myOrder = BLOrder.GetOrderById(1);
+            Action act = () => blOrder.GetOrderById(-5);
 
             //Assert
-            mockOrderRepo.VerifyGetOrderById(Times.Never());
+            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            Assert.Equal("Invalid order id", exception.Message);
+        }
+
+        [Fact]
+        public void BLOrder_DeleteOrder_InvalidId()
+        {
+            //Arrange
+
+            var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
+            var blOrder = new BLOrder(uow);
+
+            //Act
+            Action act = () => blOrder.DeleteOrder(-5);
+
+            //Assert
+            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            Assert.Equal("Invalid order id", exception.Message);
+        }
+
+        [Fact]
+        public void BLOrder_GetAllOrders()
+        {
+            //Arrange
+            var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
+            var blOrder = new BLOrder(uow);
+
+            //Act
+            var act = blOrder.GetAllOrders();
+
+            //Assert
+            Assert.Empty(act);
         }
     }
 }
