@@ -23,7 +23,7 @@ namespace Repositories
 
         public decimal GetFoodItemPrice(int id)
         {
-            return _context.FoodItems.Single(x => x.FoodItemId == id).Price;
+            return _context.FoodItems.SingleOrDefault(x => x.FoodItemId == id).Price;
         }
     }
 }

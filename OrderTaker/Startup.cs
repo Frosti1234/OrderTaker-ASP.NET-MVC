@@ -2,6 +2,7 @@ using BusinessLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +30,9 @@ namespace OrderTaker
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddControllersWithViews();
-            services.AddDbContext<OrdersDbContext>();
+            services.AddDbContext<OrdersDbContext>(options =>
+                                                   options.UseSqlServer(Configuration.GetConnectionString("DevConnection"), b => b.MigrationsAssembly("OrderTaker")));
+
             services.AddScoped<IBLCustomer, BLCustomer>();
             services.AddScoped<IBLFoodItem, BLFoodItem>();
             services.AddScoped<IBLOrder, BLOrder>();

@@ -14,6 +14,9 @@ namespace Repositories.UOW
         private IFoodItemRepository _foodItem;
         private IOrderRepository _order;
 
+        public UnitOfWork()
+        { }
+
         public UnitOfWork(OrdersDbContext context)
         {
             this._context = context;

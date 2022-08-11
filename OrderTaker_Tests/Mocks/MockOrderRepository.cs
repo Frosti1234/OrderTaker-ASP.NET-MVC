@@ -53,7 +53,7 @@ namespace OrderTaker_Tests.Mocks
             return this;
         }
 
-        public MockOrderRepository MockDeleteOrderByIdInvalid(bool result)
+        public MockOrderRepository MockDeleteOrderByIdInvalid()
         {
             Setup(x => x.DeleteOrder(It.IsAny<int>()))
                 .Throws(new Exception());

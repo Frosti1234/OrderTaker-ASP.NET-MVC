@@ -15,7 +15,6 @@ namespace OrderTaker_Tests.Tests
         public void BLOrder_GetOrderById_InvalidId()
         {
             //Arrange
-            var mockOrderRepo = new MockOrderRepository().MockGetOrderByIdInvalid();
             var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
             var blOrder = new BLOrder(uow);
 
@@ -31,7 +30,6 @@ namespace OrderTaker_Tests.Tests
         public void BLOrder_DeleteOrder_InvalidId()
         {
             //Arrange
-
             var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
             var blOrder = new BLOrder(uow);
 
@@ -41,20 +39,6 @@ namespace OrderTaker_Tests.Tests
             //Assert
             ArgumentException exception = Assert.Throws<ArgumentException>(act);
             Assert.Equal("Invalid order id", exception.Message);
-        }
-
-        [Fact]
-        public void BLOrder_GetAllOrders()
-        {
-            //Arrange
-            var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
-            var blOrder = new BLOrder(uow);
-
-            //Act
-            var act = blOrder.GetAllOrders();
-
-            //Assert
-            Assert.Empty(act);
         }
     }
 }

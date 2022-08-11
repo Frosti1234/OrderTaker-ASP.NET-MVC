@@ -11,7 +11,7 @@ namespace OrderTaker_Tests.Mocks
 {
     public class MockFoodItemRepository : Mock<IFoodItemRepository>
     {
-        public MockFoodItemRepository MockGetAllOrders(IEnumerable<FoodItem> result)
+        public MockFoodItemRepository MockGetAllFoodItems(IEnumerable<FoodItem> result)
         {
             Setup(x => x.GetAllFoodItems())
                 .Returns(result);
@@ -19,7 +19,7 @@ namespace OrderTaker_Tests.Mocks
             return this;
         }
 
-        public MockFoodItemRepository VerifyGetAllOrders(Times times)
+        public MockFoodItemRepository VerifyGetAllFoodItems(Times times)
         {
             Verify(x => x.GetAllFoodItems(), times);
 
