@@ -29,9 +29,4 @@
     <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Fakes\" />
-    <Folder Include="Stubs\" />
-  </ItemGroup>
-
 </Project>
