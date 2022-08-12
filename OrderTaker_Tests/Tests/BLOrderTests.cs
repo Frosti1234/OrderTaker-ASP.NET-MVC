@@ -16,9 +16,9 @@ namespace OrderTaker_Tests.Tests
         {
             //Arrange
             var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
-            var blOrder = new BLOrder(uow);
 
             //Act
+            var blOrder = new BLOrder(uow);
             Action act = () => blOrder.GetOrderById(-5);
 
             //Assert
@@ -31,9 +31,9 @@ namespace OrderTaker_Tests.Tests
         {
             //Arrange
             var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);
-            var blOrder = new BLOrder(uow);
 
             //Act
+            var blOrder = new BLOrder(uow);
             Action act = () => blOrder.DeleteOrder(-5);
 
             //Assert

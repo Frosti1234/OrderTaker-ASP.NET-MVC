@@ -15,7 +15,7 @@ namespace OrderTaker_Tests.Tests
     public class UowTests
     {
         [Fact]
-        public void Uow_Create_Test()
+        public void Uow_Create_ReposNotNull()
         {
             //Arrange
             var uow = new UnitOfWork(new MockCustomerRepository().Object, new MockFoodItemRepository().Object, new MockOrderRepository().Object);

@@ -29,7 +29,7 @@ namespace OrderTaker_Tests.Tests
             {
                 FoodItemId = 1,
                 FoodItemName = "test",
-                Price = 0,
+                Price = 5.00m,
             };
 
             context.FoodItems.Add(testFoodItem);
@@ -39,7 +39,7 @@ namespace OrderTaker_Tests.Tests
         }
 
         [Fact]
-        public void FoodItemRepository_GetFoodItemPriceTest()
+        public void FoodItemRepository_GetFoodItemPrice_PriceEquals()
         {
             //Arrange
             OrdersDbContext testContext = GetTestDatabase("testDataBase");
@@ -49,7 +49,7 @@ namespace OrderTaker_Tests.Tests
             var result = foodItemRepo.GetFoodItemPrice(1);
 
             //Assert
-            Assert.Equal(0, result);
+            Assert.Equal(5.00m, result);
         }
     }
 }
